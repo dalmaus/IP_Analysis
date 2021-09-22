@@ -2,15 +2,19 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 
 public class Panel extends JPanel{
 	
@@ -26,6 +30,9 @@ public class Panel extends JPanel{
 		
 		
 		this.setLayout(new BorderLayout());
+		
+		//-------------NORTH PANEL--------------
+		
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new GridBagLayout());
 		
@@ -35,7 +42,19 @@ public class Panel extends JPanel{
 		
 		this.add(northPanel, BorderLayout.NORTH);
 		
+		//------------CENTER PANEL---------------
 		
+		/*JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new GridBagLayout());
+		JSlider slider = new JSlider();
+		slider.setPreferredSize(new Dimension(780, 30));
+		//centerPanel.setPreferredSize(new Dimension(70, 30));
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		centerPanel.add(slider);
+		
+		this.add(centerPanel, BorderLayout.CENTER);*/
 	}
 	
 	/*private void addBits(JPanel panel) {
@@ -95,13 +114,6 @@ public class Panel extends JPanel{
 		
 		for(int i = 0; i < 4; i ++) {
 			
-			/*c.gridx = gridIndex;
-			c.gridy = 0;
-			JLabel number = new JLabel("0");
-			number.setFont(defaultFont);
-			
-			panel.add(number, c);*/
-			
 			JPanel subPanel = new JPanel();
 			subPanel.setLayout(new GridBagLayout());
 			
@@ -114,7 +126,7 @@ public class Panel extends JPanel{
 			
 				radioButton.addActionListener(new RadioButtonListener(bit, bitIndex++));
 			
-				c.gridx = gridIndex;
+				c.gridx = gridIndex; //maybe put all this code in a method
 				c.gridy = 0;
 				subPanel.add(bit, c);
 				c.gridy = 1;
@@ -133,15 +145,15 @@ public class Panel extends JPanel{
 				
 			}else {
 				
-				dot.setText(" "); //To not unorganize last octet
+				dot.setText(" "); //To organize last octet
 				
 			}
 			
-			dot.setFont(dotFont);
-			dot.setForeground(Color.RED);
-			c.gridx = gridIndex;
-			c.gridy = 0;
-			subPanel.add(dot, c);
+				dot.setFont(dotFont);
+				dot.setForeground(Color.RED);
+				c.gridx = gridIndex;
+				c.gridy = 0;
+				subPanel.add(dot, c);
 				
 			//SubPanel '' 
 				c.gridx = i;
@@ -160,6 +172,26 @@ public class Panel extends JPanel{
 			
 			gridIndex++;
 		}
+		
+		JLabel maskBar = new JLabel("/");
+		maskBar.setFont(numberFont);
+		c.gridx = 4;
+		c.gridy = 0;
+		panel.add(maskBar, c);
+		
+		JTextField mask = new JTextField("24", 2);
+		mask.setHorizontalAlignment(JTextField.CENTER);
+		mask.setFont(numberFont);
+		c.gridx = 5;
+		c.gridy = 0;
+		panel.add(mask, c);
+		
+		/*JSlider slider = new JSlider();
+		slider.setPreferredSize(new Dimension(500, 30));
+		c.gridx = 0;
+		c.gridy = 3;
+		panel.add(slider, c);*/
+		
 	}
 	
 	private class RadioButtonListener implements ActionListener{
