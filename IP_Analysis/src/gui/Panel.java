@@ -2,20 +2,20 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import logic.IpMath;
 
 public class Panel extends JPanel{
 	
@@ -25,6 +25,11 @@ public class Panel extends JPanel{
 	private static final Font bitFont = new Font("Dialog", Font.PLAIN, 20);
 	private static final Font dotFont = new Font("Dialog", Font.PLAIN, 30);
 	private static final Font numberFont = new Font("Dialog", Font.PLAIN, 30);
+	private static final Color WHITE = new Color(255, 255, 255);
+	private ArrayList<JLabel> octets = new ArrayList<>();
+	private ArrayList<JLabel> ipBits = new ArrayList<>();
+	private ArrayList<JRadioButton> ipBitsButtons = new ArrayList<>();
+	private JTextField mask;
 
 	public Panel() {
 		
@@ -33,18 +38,15 @@ public class Panel extends JPanel{
 		//-------------NORTH PANEL--------------
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new GridBagLayout());
-		
-		/*northPanel.add(label = new JLabel("0"));
-		northPanel.add(radioButton = new JRadioButton());*/
 		this.addBits(northPanel);
 		
 		
 		this.add(northPanel, BorderLayout.NORTH);
-		//------------CENTER PANEL---------------
 		
+		
+		//------------CENTER PANEL---------------
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
-		centerPanel.setBackground(Color.white);
 		
 		this.addLabel("Address: ",  new JLabel("192.168.0.0", SwingConstants.LEFT), centerPanel, 0);
 		this.addLabel("IPs Range: ", new JLabel("192.168.0.1 - 192.168.0.254          ", SwingConstants.LEFT), centerPanel, 1);
@@ -69,8 +71,6 @@ public class Panel extends JPanel{
 		panel.add(rightLabel, c);
 		rightLabel.setFont(numberFont);
 		rightLabel.setForeground(Color.gray);
-		
-		//panel.add(panel);
 	}
 	
 	
@@ -138,9 +138,11 @@ public class Panel extends JPanel{
 			
 				JLabel bit = new JLabel("0");
 				bit.setFont(bitFont);
+				ipBits.add(bit);
+				
 			
 				JRadioButton radioButton = new JRadioButton();
-			
+				ipBitsButtons.add(radioButton);
 				radioButton.addActionListener(new RadioButtonListener(bit, bitIndex++));
 			
 				c.gridx = gridIndex; //maybe put all this code in a method
@@ -180,7 +182,8 @@ public class Panel extends JPanel{
 			//Upper Number ''
 				
 				JPanel numberPanel = new JPanel();
-				JLabel label = new JLabel("255");
+				JLabel label = new JLabel("0");
+				octets.add(label);
 				label.setFont(numberFont);
 				numberPanel.add(label);
 				c.gridy = 0;
@@ -196,7 +199,7 @@ public class Panel extends JPanel{
 		c.gridy = 0;
 		panel.add(maskBar, c);
 		
-		JTextField mask = new JTextField("24", 2);
+		mask = new JTextField("24", 2);
 		mask.setHorizontalAlignment(JTextField.CENTER);
 		mask.setFont(numberFont);
 		c.gridx = 5;
@@ -225,8 +228,34 @@ public class Panel extends JPanel{
 			
 			bit.setText(text);
 			
+			update();
+			
 		}
 		
+	}
+	
+	private void update() {
 		
+		int ip = 0;
+		
+		for(int i = 0; i < IP_BITS_LENGTH; i++) {
+			
+			JLabel label = ipBits.get(i);
+			
+			if(label.getText().equals("1")) {
+				
+				int n = 1 << (ipBits.size() - 1) - i;
+				
+				ip += n;
+			}
+		}
+		
+		ArrayList<Integer> ipOctets = IpMath.convertRawIp(ip);
+		
+		for(int i = 0; i < octets.size(); i++) {
+			
+			octets.get(i).setText(String.valueOf(ipOctets.get(i)));
+			
+		}
 	}
 }
