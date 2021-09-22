@@ -15,24 +15,22 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class Panel extends JPanel{
 	
 	private JLabel label;
 	private JRadioButton radioButton;
-	private static final int ipBitsLength = 32;
+	private static final int IP_BITS_LENGTH = 32;
 	private static final Font bitFont = new Font("Dialog", Font.PLAIN, 20);
 	private static final Font dotFont = new Font("Dialog", Font.PLAIN, 30);
 	private static final Font numberFont = new Font("Dialog", Font.PLAIN, 30);
 
 	public Panel() {
 		
-		
-		
 		this.setLayout(new BorderLayout());
 		
 		//-------------NORTH PANEL--------------
-		
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new GridBagLayout());
 		
@@ -40,22 +38,41 @@ public class Panel extends JPanel{
 		northPanel.add(radioButton = new JRadioButton());*/
 		this.addBits(northPanel);
 		
-		this.add(northPanel, BorderLayout.NORTH);
 		
+		this.add(northPanel, BorderLayout.NORTH);
 		//------------CENTER PANEL---------------
 		
-		/*JPanel centerPanel = new JPanel();
+		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
-		JSlider slider = new JSlider();
-		slider.setPreferredSize(new Dimension(780, 30));
-		//centerPanel.setPreferredSize(new Dimension(70, 30));
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		centerPanel.add(slider);
+		centerPanel.setBackground(Color.white);
 		
-		this.add(centerPanel, BorderLayout.CENTER);*/
+		this.addLabel("Address: ",  new JLabel("192.168.0.0", SwingConstants.LEFT), centerPanel, 0);
+		this.addLabel("IPs Range: ", new JLabel("192.168.0.1 - 192.168.0.254          ", SwingConstants.LEFT), centerPanel, 1);
+		this.addLabel("Broadcast: ", new JLabel("192.168.0.255", SwingConstants.LEFT), centerPanel, 2);
+		this.addLabel("Max. Hosts: ",  new JLabel("254", SwingConstants.LEFT), centerPanel, 3);
+		
+		
+		this.add(centerPanel, BorderLayout.CENTER);
+		
 	}
+	private void addLabel(String leftLabelText, JLabel rightLabel, JPanel panel, int y) { //add regex to ip fields
+		
+		JLabel leftLab = new JLabel(leftLabelText, SwingConstants.RIGHT);
+		leftLab.setFont(numberFont);
+		
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = y;
+		c.gridx = 0;
+		panel.add(leftLab, c);
+		c.gridx = 1;
+		panel.add(rightLabel, c);
+		rightLabel.setFont(numberFont);
+		rightLabel.setForeground(Color.gray);
+		
+		//panel.add(panel);
+	}
+	
 	
 	/*private void addBits(JPanel panel) {
 		
@@ -185,12 +202,6 @@ public class Panel extends JPanel{
 		c.gridx = 5;
 		c.gridy = 0;
 		panel.add(mask, c);
-		
-		/*JSlider slider = new JSlider();
-		slider.setPreferredSize(new Dimension(500, 30));
-		c.gridx = 0;
-		c.gridy = 3;
-		panel.add(slider, c);*/
 		
 	}
 	
