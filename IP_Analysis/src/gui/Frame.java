@@ -13,8 +13,10 @@ public class Frame extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int height = screenSize.height;
 		int width = screenSize.width;
-		this.setSize(width/2, height/2);
+		//this.setSize(width/2, height/2);
+		this.setSize(820, 350);
 		this.setLocationRelativeTo(null);
+		
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
