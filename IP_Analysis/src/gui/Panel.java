@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import logic.IpMath;
 
@@ -200,12 +202,14 @@ public class Panel extends JPanel{
 		panel.add(maskBar, c);
 		
 		mask = new JTextField("24", 2);
+		mask.getDocument().addDocumentListener(new TextFieldListener());
 		mask.setHorizontalAlignment(JTextField.CENTER);
 		mask.setFont(numberFont);
 		c.gridx = 5;
 		c.gridy = 0;
 		panel.add(mask, c);
 		
+		paintMask(Integer.valueOf(mask.getText())); //Temporary. Put it inside a method which purpose is to get the initial position or appearence for every component.
 	}
 	
 	private class RadioButtonListener implements ActionListener{
@@ -234,15 +238,39 @@ public class Panel extends JPanel{
 		
 	}
 	
-	private void update() {
+	private class TextFieldListener implements DocumentListener{
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			
+			update();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			
+			update();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			
+			update();
+			
+		}
+		
+		
+	}
+	
+	private void update() { //This method has to have every calculation but maybe it can be done into a switch, for every specific calculation/update.
 		
 		int ip = 0;
 		
-		for(int i = 0; i < IP_BITS_LENGTH; i++) {
+		for(int i = 0; i < IP_BITS_LENGTH; i++) { 
 			
 			JLabel label = ipBits.get(i);
 			
-			if(label.getText().equals("1")) {
+			if(label.getText().equals("1")) { //checks for every set bit and creates an integer of 32 bits representing the ip
 				
 				int n = 1 << (ipBits.size() - 1) - i;
 				
@@ -252,10 +280,35 @@ public class Panel extends JPanel{
 		
 		ArrayList<Integer> ipOctets = IpMath.convertRawIp(ip);
 		
-		for(int i = 0; i < octets.size(); i++) {
+		for(int i = 0; i < octets.size(); i++) { 
 			
 			octets.get(i).setText(String.valueOf(ipOctets.get(i)));
 			
 		}
+		
+		paintMask(Integer.valueOf(mask.getText())); 
+		
+	}
+	
+	private void paintMask(int mask) {
+		
+		for(int i = 0; i < IP_BITS_LENGTH; i++) {
+			
+			JLabel bit = ipBits.get(i);
+			
+			Color c = null;
+			
+			if(i < mask) 
+			
+				c = Color.GRAY;
+			else 
+				
+				c = Color.BLACK;
+				
+			
+			bit.setForeground(c);
+			
+		}
+		
 	}
 }
