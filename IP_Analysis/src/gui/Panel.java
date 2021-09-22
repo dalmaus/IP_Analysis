@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -17,6 +16,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import logic.IpAddress;
 import logic.IpMath;
 
 public class Panel extends JPanel{
@@ -32,6 +32,10 @@ public class Panel extends JPanel{
 	private ArrayList<JLabel> ipBits = new ArrayList<>();
 	private ArrayList<JRadioButton> ipBitsButtons = new ArrayList<>();
 	private JTextField mask;
+	private JLabel address;
+	private JLabel range;
+	private JLabel broadcast;
+	private JLabel hosts;
 
 	public Panel() {
 		
@@ -40,7 +44,7 @@ public class Panel extends JPanel{
 		//-------------NORTH PANEL--------------
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new GridBagLayout());
-		this.addBits(northPanel);
+		this.addBits(northPanel); //adds most of the components
 		
 		
 		this.add(northPanel, BorderLayout.NORTH);
@@ -50,13 +54,10 @@ public class Panel extends JPanel{
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new GridBagLayout());
 		
-		this.addLabel("Address: ",  new JLabel("192.168.0.0", SwingConstants.LEFT), centerPanel, 0);
-		this.addLabel("IPs Range: ", new JLabel("192.168.0.1 - 192.168.0.254          ", SwingConstants.LEFT), centerPanel, 1);
-		this.addLabel("Broadcast: ", new JLabel("192.168.0.255", SwingConstants.LEFT), centerPanel, 2);
-		this.addLabel("Max. Hosts: ",  new JLabel("254", SwingConstants.LEFT), centerPanel, 3);
-		
+		setInitialLabels(centerPanel);
 		
 		this.add(centerPanel, BorderLayout.CENTER);
+		
 		
 	}
 	private void addLabel(String leftLabelText, JLabel rightLabel, JPanel panel, int y) { //add regex to ip fields
@@ -74,55 +75,6 @@ public class Panel extends JPanel{
 		rightLabel.setFont(numberFont);
 		rightLabel.setForeground(Color.gray);
 	}
-	
-	
-	/*private void addBits(JPanel panel) {
-		
-		GridBagConstraints c = new GridBagConstraints();
-		
-		int gridIndex = 0; //To keep track of the panel component addtions
-		int bitIndex = 0; // '''''''''''''''''''' real bits. Useful to get the real index of each bit for further calculations.
-		
-		for(int i = 0; i < 4; i ++) {
-			
-			c.gridx = gridIndex;
-			c.gridy = 0;
-			JLabel number = new JLabel("0");
-			number.setFont(defaultFont);
-			
-			panel.add(number, c);
-			
-			for(int j = 0; j < 8; j++) {
-			
-				JLabel bit = new JLabel("0");
-				bit.setFont(defaultFont);
-			
-				JRadioButton radioButton = new JRadioButton();
-			
-				radioButton.addActionListener(new RadioButtonListener(bit, bitIndex++));
-			
-				c.gridx = gridIndex;
-				c.gridy = 1;
-				panel.add(bit, c);
-				c.gridy = 2;
-				panel.add(radioButton, c);
-			
-				gridIndex++;
-			}
-			
-			if(i != 3) { //To avoid the last dot
-			
-				JLabel dot = new JLabel(".");
-				dot.setFont(dotFont);
-				c.gridx = gridIndex;
-				c.gridy = 1;
-			
-				panel.add(dot, c);
-			}
-			
-			gridIndex++;
-		}
-	}*/
 	
 	private void addBits(JPanel panel) {
 		
@@ -145,7 +97,7 @@ public class Panel extends JPanel{
 			
 				JRadioButton radioButton = new JRadioButton();
 				ipBitsButtons.add(radioButton);
-				radioButton.addActionListener(new RadioButtonListener(bit, bitIndex++));
+				radioButton.addActionListener(new RadioButtonListener(bit));
 			
 				c.gridx = gridIndex; //maybe put all this code in a method
 				c.gridy = 0;
@@ -209,18 +161,16 @@ public class Panel extends JPanel{
 		c.gridy = 0;
 		panel.add(mask, c);
 		
-		paintMask(Integer.valueOf(mask.getText())); //Temporary. Put it inside a method which purpose is to get the initial position or appearence for every component.
+		paintMask(Integer.valueOf(mask.getText())); //Temporary. maybe put it inside a method which purpose is to get the initial position or appearence for every component.
 	}
 	
 	private class RadioButtonListener implements ActionListener{
 		
 		private final JLabel bit;
-		private final int index; //Maybe this is useless as probably we are going to add them to an array.
 		
-		public RadioButtonListener(JLabel bit, int index) {
+		public RadioButtonListener(JLabel bit) {
 			
 			this.bit = bit;
-			this.index = index;
 		}
 
 		@Override
@@ -286,6 +236,7 @@ public class Panel extends JPanel{
 			
 		}
 		
+		updateLabelCalculations(ipOctets);
 		paintMask(Integer.valueOf(mask.getText())); 
 		
 	}
@@ -309,6 +260,51 @@ public class Panel extends JPanel{
 			bit.setForeground(c);
 			
 		}
+		
+	}
+	
+	private void updateLabelCalculations(ArrayList<Integer> octets) {
+		
+		int m = Integer.valueOf(mask.getText());
+		
+		IpAddress ip = new IpAddress(octets, m);
+		
+		address.setText(IpMath.getAddress(ip, IpMath.NETWORK_ADDRESS).toText());
+		
+		IpAddress firstAddress = IpMath.getAddress(ip, IpMath.FIRST_ASSIGNABLE_ADDRESS);
+		IpAddress lastAddress = IpMath.getAddress(ip, IpMath.LAST_ASSIGNABLE_ADDRESS);
+		
+		range.setText(firstAddress.toText() +" - "+lastAddress.toText());
+		
+		broadcast.setText(IpMath.getAddress(ip, IpMath.BROADCAST_ADDRESS).toText());
+		
+		hosts.setText(String.valueOf(IpMath.getMaxHosts(ip)));
+		
+	}
+	
+	private void setInitialLabels(JPanel panel) {
+		
+		this.addLabel("Address: ",  address = new JLabel("192.168.0.0", SwingConstants.LEFT), panel, 0);
+		this.addLabel("IPs Range: ", range = new JLabel("192.168.0.1 - 192.168.0.254", SwingConstants.LEFT), panel, 1);
+		this.addLabel("Broadcast: ", broadcast = new JLabel("192.168.0.255", SwingConstants.LEFT), panel, 2);
+		this.addLabel("Max. Hosts: ", hosts = new JLabel("254", SwingConstants.LEFT), panel, 3);
+		
+		octets.get(0).setText("192");
+		octets.get(1).setText("168");
+		octets.get(2).setText("0");
+		octets.get(3).setText("0");
+		
+		ipBits.get(0).setText("1");
+		ipBits.get(1).setText("1");
+		ipBits.get(8).setText("1");
+		ipBits.get(10).setText("1");
+		ipBits.get(12).setText("1");
+		
+		ipBitsButtons.get(0).setSelected(true);
+		ipBitsButtons.get(1).setSelected(true);
+		ipBitsButtons.get(8).setSelected(true);
+		ipBitsButtons.get(10).setSelected(true);
+		ipBitsButtons.get(12).setSelected(true);
 		
 	}
 }
