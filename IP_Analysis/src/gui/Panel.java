@@ -43,22 +43,22 @@ public class Panel extends JPanel{
 		
 		this.setLayout(new BorderLayout());
 		
-		//-------------NORTH PANEL--------------
-		JPanel northPanel = new JPanel();
-		northPanel.setLayout(new GridBagLayout());
-		this.addBits(northPanel); //adds most of the components
+		//-------------UPPER PANEL--------------
+		JPanel upperPanel = new JPanel();
+		upperPanel.setLayout(new GridBagLayout());
+		this.addBits(upperPanel); //adds most of the components
 		
 		
-		this.add(northPanel, BorderLayout.NORTH);
+		this.add(upperPanel, BorderLayout.NORTH);
 		
 		
-		//------------CENTER PANEL---------------
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new GridBagLayout());
+		//------------LOWER PANEL---------------
+		JPanel lowerPanel = new JPanel();
+		lowerPanel.setLayout(new GridBagLayout());
 		
-		setInitialLabels(centerPanel);
+		setInitialLabels(lowerPanel);
 		
-		this.add(centerPanel, BorderLayout.CENTER);
+		this.add(lowerPanel, BorderLayout.CENTER);
 		
 		
 	}
@@ -155,14 +155,6 @@ public class Panel extends JPanel{
 		c.gridy = 0;
 		panel.add(maskBar, c);
 		
-		/*mask = new JTextField("24", 2);
-		mask.getDocument().addDocumentListener(new TextFieldListener());
-		mask.setHorizontalAlignment(JTextField.CENTER);
-		mask.setFont(numberFont);
-		c.gridx = 5;
-		c.gridy = 0;
-		panel.add(mask, c);*/
-		
 		mask = new JSpinner(new SpinnerNumberModel(24, 1, 30, 1));
 		mask.addChangeListener(new SpinnerListener());
 		
@@ -258,6 +250,7 @@ public class Panel extends JPanel{
 				
 				c = Color.BLACK;
 				
+			
 			bit.setForeground(c);
 			
 		}
