@@ -212,9 +212,6 @@ public class Panel extends JPanel{
 			update();
 			
 		}
-		
-		
-		
 	}
 	
 	private void update() { //This method has to have every calculation but maybe it can be done into a switch, for every specific calculation/update.
@@ -261,7 +258,6 @@ public class Panel extends JPanel{
 				
 				c = Color.BLACK;
 				
-			
 			bit.setForeground(c);
 			
 		}
